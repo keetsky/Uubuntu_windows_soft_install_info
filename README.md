@@ -1,0 +1,2 @@
+# Uubuntu_windows_soft_install_info
+系统环境配置
