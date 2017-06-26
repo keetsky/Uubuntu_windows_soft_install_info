@@ -1,0 +1,187 @@
+﻿1.安装搜狗 http://jingyan.baidu.com/article/08b6a591cb06f114a8092209.html
+
+
+
+2.安装lantern
+   https://github.com/getlantern/lantern
+	sudo dpkg -i lantern-installer-beta-64-bit.deb
+	卸载：sudo apt-get autoremove --purge lantern
+	搜索中输入lantern，点开
+3.安装ros indigo
+	http://www.jianshu.com/p/04be841e2293
+	最后$echo “source ~/catkin_ws/devel/setup.bash” >> ~/.bashrc
+4.安装openni2 nite2     for(asus xtion)
+	http://stackoverflow.com/questions/19938830/openni2-and-asus-xtion-pro-live-device-not-found
+	sudo apt-get install g++ python libusb-1.0-0-dev libudev-dev openjdk-6-jdk 	freeglut3-dev doxygen graphviz -y
+	git clone https://github.com/occipital/OpenNI2.git
+	cd OpenNI2 && make -j4
+	export OPENNI2_INCLUDE=/home/keetsky/OpenNI2/Include
+
+	sudo ln -s /lib/x86_64-linux-gnu/libudev.so.1.3.5 /lib/x86_64-linux-	gnu/libudev.so.0
+
+	运行./NiViewer
+	但是发现无法编译ros含有openni.h的tracker_my的程序，
+	安装OpenNI-Linux-x64-2.2
+	sudo ./install.sh 
+	拷贝OpenNIDevEnvironment到.bashrc中
+	sudo cp -r Include /usr/include/openni2
+	sudo cp -r Redist/OpenNI2 /usr/lib
+	sudo cp Redist/libopenNI2.* /usr/lib
+	sudo ln -s /lib/x86_64-linux-gnu/libudev.so.1.3.5 /lib/x86_64-linux- gnu/libudev.so.0
+	
+	安装Sensor-Bin-Linux-x64-v5.1.6.6：
+		chmod +x install.sh && sudo ./install.sh
+	安装nite2:(NiTE-2.0.0)
+		./install.sh
+		拷贝NiTEDevEnvironment文件中的
+		export NITE2_INCLUDE=/home/keetsky/NiTE-2.0.0/Include
+		export NITE2_REDIST64=/home/keetsky/NiTE-2.0.0/Redist
+		到 .bashrc 中
+		运行./UserV	iewer
+5.boost 安装
+	sudo apt-get install libboost-all-dev 
+	或sudo apt-get install libboost-dev libboost-thread-dev libboost-filesystem-dev
+
+6.eigen3安装
+	sudo apt-get install libeigen3-dev
+	或者：下载http://eigen.tuxfamily.org/index.php?title=Main_Page
+	mkdir build 
+	cd build
+	cmake ..
+	make 
+	sudo make install
+7.ros usb_camera 安装
+	cd catkin_ws/src
+	git clone https://github.com/bosch-ros-pkg/usb_cam
+	cd ..
+	catkin_make
+	roscore
+	roslaunch usb_cam usb_cam-test.launch 
+8.ros openni2 安装
+	http://blog.csdn.net/chenxingwangzi/article/details/48825767
+	http://www.cnblogs.com/cj2014/p/4007165.html
+	sudo apt-get install ros-indigo-openni2-camera
+	sudo apt-get install ros-indigo-openni2-launch 
+	roslaunch openni2_launch openni2.launch
+	rosrun rviz rviz
+	或：rosrun rqt_image_view rqt_image_view
+9.kinect2 驱动安装
+	http://blog.csdn.net/sunbibei/article/details/51594824
+	git clone https://github.com/OpenKinect/libfreenect2.git
+	cd libfreenect2
+	cd depends; ./download_debs_trusty.sh
+	sudo apt-get install build-essential cmake pkg-config
+	sudo dpkg -i debs/libusb*deb
+	sudo apt-get install libturbojpeg libjpeg-turbo8-dev
+	sudo dpkg -i debs/libglfw3*deb
+	sudo apt-get install -f
+	sudo apt-get install libgl1-mesa-dri-lts-vivid   出现错误可忽略
+	
+	mkdir build && cd build
+	cmake .. -DCMAKE_INSTALL_PREFIX=$HOME/freenect2 -DENABLE_CXX11=ON
+	make
+	make install
+	sudo cp ../platform/linux/udev/90-kinect2.rules /etc/udev/rules.d/
+	查看运行结果：./bin/Protonect
+	
+10.orb slam2 安装
+	http://webdiis.unizar.es/~raulmur/orbslam/
+	https://github.com/raulmur/ORB_SLAM2
+http://www.liuxiao.org/2016/03/ros-orb-slam2-%E5%AE%89%E8%A3%85%E8%B0%83%E8%AF%95/
+	http://blog.csdn.net/fk1174/article/details/51800728
+	http://blog.csdn.net/u010128736/article/category/6461394
+	先安装依赖项
+	Pangolin：
+	sudo apt-get install libglew-dev
+	git clone https://github.com/stevenlovegrove/Pangolin.git
+
+	cd Pangolin
+	mkdir build
+	cd build
+	cmake ..
+	make -j
+	opencv:
+	eigen3:
+	安装：
+	git clone https://github.com/raulmur/ORB_SLAM2.git ORB_SLAM2
+	cd ORB_SLAM2
+	chmod +x build.sh
+	./build.sh
+	下载数据库解压：http://vision.in.tum.de/data/datasets/rgbd-dataset/download
+	比如：解压文件夹为rgbd_dataset_freiburg1_xyz
+	运行：./Examples/Monocular/mono_tum Vocabulary/ORBvoc.txt Examples/Monocular/TUM1.yaml /home/keetsky/ORB_SLAM2/rgbd_dataset_freiburg1_xyz
+	ROS:
+	添加ROS_PACKAGE_PATH路径:在.brashrc中添加
+	export ROS_PACKAGE_PATH=${ROS_PACKAGE_PATH}:~/ORB_SLAM2/Examples/ROS
+	或用命令：$echo “export ROS_PACKAGE_PATH=${ROS_PACKAGE_PATH}:~/ORB_SLAM2/Examples/ROS” >> ~/.bashrc
+	查看是否添加成功： echo $ROS_PACKAGE_PATH 
+	用单目摄像头： usb_camera，运行ros 摄像头 roslaunch usb_cam usb_cam-test.launch                rostopic list 获得摄像头节点发布主 题/usb_cam/image_raw,修改ORB_SLAM2/Examples/ROS/ORB_SLAM2/src/ros_mono.cc中为ros::Subscriber sub = nodeHandler.subscribe("/usb_cam/image_raw",
+即usb_camera把摄像头数据发布到topic
+	编译ros程序
+	cd ~/ORB_SLAM2
+	chmod +x build_ros.sh
+	./build_ros.sh
+	启动roscore 和usb roslaunch
+	启动mono：rosrun ORB_SLAM2 Mono /home/keetsky/ORB_SLAM2/Vocabulary/ORBvoc.txt /home/keetsky/ORB_SLAM2/Examples/Monocular/TUM1.yaml  可看到结果
+	深度数据：采用asus xtion ,需要预先安装openni2 camera 和openni2 launch。运行roslaunch openni2_launch  openni2.launch 
+	修改orb_slam 中ros_rgbd.cc程序，发布主题修改为/camera/rgb/image_raw 和camera/depth_registered/image_raw
+	 rosrun ORB_SLAM2 RGBD /home/keetsky/ORB_SLAM2/Vocabulary/ORBvoc.txt /home/keetsky/ORB_SLAM2/Examples/Monocular/TUM1.yaml
+	深度数据：kinect2 安装完驱动安装 iai-kinect2
+	http://blog.csdn.net/sunbibei/article/details/51594824
+	cd ~/catkin_ws/src/
+	git clone https://github.com/code-iai/iai_kinect2.git
+	cd iai_kinect2
+	rosdep install -r --from-paths .     （我运行出错，跳过后不影响结果）
+	cd ~/catkin_ws
+	catkin_make -DCMAKE_BUILD_TYPE="Release"
+	如果路径不对可catkin_make -Dfreenect2_DIR=path_to_freenect2/lib/cmake/freenect2 -DCMAKE_BUILD_TYPE="Release"
+	roslaunch kinect2_bridge kinect2_bridge.launch
+	查看：rosrun kinect2_viewer kinect2_viewer sd cloud
+
+	修改ORB_SLAM2下ros_rgbd.cc程序
+	节点主题改为"/kinect2/qhd/image_color" 和"/kinect2/qhd/image_depth_rect"
+	重新编译：cd ~/ORB_SLAM2
+			./build_ros.sh
+	运行：roscore
+	roslaunch kinect2_bridge kinect2_bridge.launch
+	rosrun ORB_SLAM2 RGBD /home/keetsky/ORB_SLAM2/Vocabulary/ORBvoc.txt /home/keetsky/ORB_SLAM2/Examples/Monocular/TUM1.yaml
+
+11.python2.7安装
+	sudo apt-get install libpython2.7-dev
+12.glew 安装
+	sudo apt-get install libglew-dev
+13.cmake 安装
+	sudo apt-get install cmake
+14.git 安装
+	sudo apt-get install git
+15.编译基础库安装
+	sudo apt-get install build-essential
+16.opencv 安装
+	sudo apt-get install build-essential
+	sudo apt-get install cmake git libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev
+	sudo apt-get install python-dev python-numpy libtbb2 libtbb-dev libjpeg-dev libpng-dev libtiff-dev libjasper-dev libdc1394-22-dev
+	下载opencv 2.4.11
+	mkdir release
+	cd release
+	cmake -D CMAKE_BUILD_TYPE=RELEASE -D CMAKE_INSTALL_PREFIX=/usr/local ..
+	make
+	sudo make install
+17.安装BLAS and LAPACK库
+	sudo apt-get install libblas-dev
+	sudo apt-get install liblapack-dev
+
+
+
+
+		
+
+
+	
+		
+
+
+
+		
+	
+
+

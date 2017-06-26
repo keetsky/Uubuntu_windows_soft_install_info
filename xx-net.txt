@@ -1,0 +1,10 @@
+
+问题：
+    1. 无法登入youtube
+        改 data/gae_proxy/manual.ini或data/gae_proxy/config.in文件添加下面语句然后重启xx-net     https://github.com/XX-net/XX-Net/issues/5692
+	[hosts]
+	.youtube.com = gae
+    	
+
+	
+	
